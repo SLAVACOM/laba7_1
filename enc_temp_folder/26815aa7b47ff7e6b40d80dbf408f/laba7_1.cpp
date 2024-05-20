@@ -31,7 +31,7 @@ int main(){
             cout << "Введите ФИО: ";
             getline(cin, Name);
             if (deleteElement(head, Name)) saveListToFile(head, "list.txt");
-            else cerr << "Ошибка при удалении" << endl;
+            else cerr << "Ошибка при удалении";
         }
         else if (input == "2") {
             printList(head);

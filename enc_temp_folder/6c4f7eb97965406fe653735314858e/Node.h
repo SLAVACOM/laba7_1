@@ -11,7 +11,7 @@ struct Node {
 
 namespace constants {
     const std::string fullName{ "Иванов Иван Иванович" };
-    const std::string status{ "Не женат" };
+    const std::string status{ "Холост" };
     const int age { 20 };
 }
 
