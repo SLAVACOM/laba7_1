@@ -33,16 +33,12 @@ int main() {
 			if (deleteElement(head, Name)) saveListToFile(head, "list.txt");
 			else cerr << "Ошибка при удалении" << endl;
 		}
-		else if (input == "2") {
-			printList(head);
-		}
+		else if (input == "2") printList(head);
 		else if (input == "3") {
 			setDefaultValues(head, constants::fullName, constants::age, constants::status);
 			saveListToFile(head, "list.txt");
 		}
-		else if (input == "4") {
-			setList(head, "list.txt");
-		}
+		else if (input == "4") setList(head, "list.txt");
 	} while (input != "5");
 	clearList(head);
 	cout << "До свидания!" << endl;

@@ -77,7 +77,7 @@ bool loadListFromFile(Node*& head, const std::string& filename) {
 
 		addElement(head, fullName, age, maritalStatus);
 	}
-
+	inFile.close();
 	return true;
 }
 
