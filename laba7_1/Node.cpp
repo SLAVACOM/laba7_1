@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include <limits>
+#include <regex>
 
 
 void addElement(Node*& head, const std::string& fullName, int age, const std::string& maritalStatus) {
@@ -59,23 +60,32 @@ void saveListToFile(Node* head, const std::string& filename) {
 
 bool loadListFromFile(Node*& head, const std::string& filename) {
 	std::ifstream inFile(filename);
-	if (!inFile) {
+	if (!inFile.is_open()) {
 		std::cerr << "Ошибка открытия файла для чтения" << std::endl;
 		return false;
 	}
 
 	std::string line;
 	while (std::getline(inFile, line)) {
-		std::istringstream ss(line);
-		std::string fullName, maritalStatus;
-		int age;
-		char delimiter;
+		try {
+			std::istringstream iss(line);
 
-		std::getline(ss, fullName, ';');
-		ss >> age >> delimiter;
-		std::getline(ss, maritalStatus);
+			std::string fullName, maritalStatus, age;
 
-		addElement(head, fullName, age, maritalStatus);
+			std::getline(iss, fullName, ';');
+			std::getline(iss, age, ';');
+			std::getline(iss, maritalStatus, ';');
+
+			if (!fullName.empty() && validAge(age) && !maritalStatus.empty()) {
+				addElement(head, fullName, std::stoi(age), maritalStatus);
+			}
+			else if (line.empty()) return true;
+			else return false;
+		}
+		catch (const std::exception& e) {
+			std::cerr << "Данные неверные в файле" << std::endl;
+			return false;
+		}
 	}
 	inFile.close();
 	return true;
@@ -94,20 +104,14 @@ void clearList(Node*& head) {
 	head = nullptr;
 }
 
-int getIntInput() {
-	int input;
-	while (!(std::cin >> input)) {
-		std::cin.clear();
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		std::cout << "Некорректный ввод. Пожалуйста, введите целое число: ";
-	}
-	return input;
+bool validAge(std::string age) {
+	std::regex valid_age("[1-9][0-9]?[0-9]?|0");
+	return regex_match(age, valid_age);
 }
-
 void printFunctionsList() {
 	std::cout << "1)Удалить заданный элемент\n2)Печать всех элементов" << std::endl;
 	std::cout << "3)Присвоение всем элементам предустановленных значений" << std::endl;
-	std::cout << "4)Заполнить данными \n5)Выход" << std::endl;
+	std::cout << "4)Выход" << std::endl;
 }
 
 bool deleteElement(Node*& head, const std::string& searchValue) {
@@ -154,17 +158,3 @@ void setDefaultValues(Node* head, const std::string& fullName, int age, const st
 	} while (current != head);
 }
 
-void setList(Node*& head, const std::string& filename) {
-	clearList(head);
-	addElement(head, "Ольга Петрова", 35, "Не замужем");
-	addElement(head, "Михаил Иванов", 42, "Женат");
-	addElement(head, "Екатерина Сидорова", 28, "Не замужем");
-	addElement(head, "Александр Кузнецов", 39, "Женат");
-	addElement(head, "Мария Романова", 31, "Не замужем");
-	addElement(head, "Дмитрий Смирнов", 27, "Не женат");
-	addElement(head, "Анна Лебедева", 24, "Не замужем");
-	addElement(head, "Сергей Попов", 45, "Женат");
-	addElement(head, "Елена Соколова", 33, "Не замужем");
-	addElement(head, "Иван Орлов", 29, "Не женат");
-	saveListToFile(head, filename);
-}
